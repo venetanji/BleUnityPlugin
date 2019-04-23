@@ -35,17 +35,6 @@ public class BleConnector {
     private static final int STATE_CONNECTING = 1;
     private static final int STATE_CONNECTED = 2;
 
-    public final static String ACTION_GATT_CONNECTED =
-            "com.hagaostudio.bluetooth.le.ACTION_GATT_CONNECTED";
-    public final static String ACTION_GATT_DISCONNECTED =
-            "com.hagaostudio.bluetooth.le.ACTION_GATT_DISCONNECTED";
-    public final static String ACTION_GATT_SERVICES_DISCOVERED =
-            "com.hagaostudio.bluetooth.le.ACTION_GATT_SERVICES_DISCOVERED";
-    public final static String ACTION_DATA_AVAILABLE =
-            "com.hagaostudio.bluetooth.le.ACTION_DATA_AVAILABLE";
-    public final static String EXTRA_DATA =
-            "com.hagaostudio.bluetooth.le.EXTRA_DATA";
-
 
     private static final BleConnector ourInstance = new BleConnector();
 
@@ -91,25 +80,6 @@ public class BleConnector {
 
         }
 
-//        @Override
-//        // Result of a characteristic read operation
-//        public void onCharacteristicRead(BluetoothGatt gatt,
-//                                         BluetoothGattCharacteristic characteristic,
-//                                         int status) {
-//            final byte[] data = characteristic.getValue();
-//            if (data != null && data.length > 0) {
-//                Log.i(TAG, "onCharacteristic read1: " + new String(data, StandardCharsets.UTF_8));
-//                Log.i(TAG, "onCharacteristic read2: " + new String(data, StandardCharsets.US_ASCII));
-//                Log.i(TAG, "onCharacteristic read3: " + new String(data, StandardCharsets.UTF_16));
-//                Log.i(TAG, "onCharacteristic read4: " + new String(data, StandardCharsets.UTF_16BE));
-//                Log.i(TAG, "onCharacteristic read5: " + new String(data, StandardCharsets.UTF_16LE));
-//                Log.i(TAG, "onCharacteristic read6: " + data.toString());
-//            }
-//
-//            //bluetoothGatt.readCharacteristic(serialChar);
-//        }
-
-
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
@@ -137,10 +107,10 @@ public class BleConnector {
     BluetoothGatt bluetoothGatt;
 
     public void BleConnect(String deviceName) {
-        if (appActivity.checkSelfPermission(Manifest.permission.BLUETOOTH)
+        if (ActivityCompat.checkSelfPermission(appContext, Manifest.permission.BLUETOOTH)
                 != PackageManager.PERMISSION_GRANTED) {
             Log.i(TAG, "No Permissions, asking ");
-            appActivity.requestPermissions( new String[]{Manifest.permission.BLUETOOTH}, 0);
+            ActivityCompat.requestPermissions( appActivity, new String[]{Manifest.permission.BLUETOOTH}, 0);
         }
         adapter = BluetoothAdapter.getDefaultAdapter();
         devices = adapter.getBondedDevices();
