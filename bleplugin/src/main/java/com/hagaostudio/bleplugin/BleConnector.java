@@ -1,14 +1,22 @@
+package com.hagaostudio.bleplugin;
+
 import android.bluetooth.*;
 import android.util.Log;
 import java.util.Set;
-import android.app.Activity;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.app.ActivityCompat;
+
 import android.content.Context;
+import android.app.Activity;
+import android.Manifest;
+import android.content.pm.PackageManager;
 
 
 public class BleConnector {
     private final static String TAG = "BleUnity";
     private int connectionState = STATE_DISCONNECTED;
     private Context appContext;
+    private Activity appActivity;
 
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
@@ -35,6 +43,7 @@ public class BleConnector {
     private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            Log.i(TAG, "State: " + newState);
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 connectionState = STATE_CONNECTED;
                 Log.i(TAG, "Connected to GATT server.");
@@ -46,15 +55,31 @@ public class BleConnector {
             }
         }
 
+        @Override
+        // New services discovered
+        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            Log.i(TAG, "onServicesDiscovered received: " + status);
+        }
+
+        @Override
+        // Result of a characteristic read operation
+        public void onCharacteristicRead(BluetoothGatt gatt,
+                                         BluetoothGattCharacteristic characteristic,
+                                         int status) {
+            Log.i(TAG, "onServicesDiscovered received: " + status);
+        }
+
     };
 
     private BleConnector() {
+
 
     }
 
     public void setContext(Context unityContext) {
         appContext = unityContext;
     }
+    public void setActivity(Activity unityActivity) { appActivity = unityActivity; }
 
 
     private BluetoothAdapter adapter;
@@ -63,15 +88,20 @@ public class BleConnector {
     BluetoothGatt bluetoothGatt;
 
     public void BleConnect(String deviceName) {
-
+        if (appActivity.checkSelfPermission(Manifest.permission.BLUETOOTH)
+                != PackageManager.PERMISSION_GRANTED) {
+            Log.i(TAG, "No Permissions, asking ");
+            appActivity.requestPermissions( new String[]{Manifest.permission.BLUETOOTH}, 0);
+        }
         adapter = BluetoothAdapter.getDefaultAdapter();
         devices = adapter.getBondedDevices();
         for(BluetoothDevice device:devices)
         {
             Log.i(TAG, "Found Device: " + device.getName());
             if (device.getName().equals(deviceName)) {
+                Log.i(TAG, "Found device ");
                 activeDevice = adapter.getRemoteDevice(device.getAddress());
-                bluetoothGatt = device.connectGatt(appContext, false, gattCallback);
+                bluetoothGatt = device.connectGatt(appContext, false, gattCallback, BluetoothDevice.TRANSPORT_LE);
             };
         }
     }
