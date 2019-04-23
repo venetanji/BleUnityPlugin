@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 
 public class BleConnector {
     private final static String TAG = "BleUnity";
+    public static final String SerialProtUUID="0000dfb1-0000-1000-8000-00805f9b34fb";
     private int connectionState = STATE_DISCONNECTED;
     private Context appContext;
     private Activity appActivity;
@@ -58,7 +59,16 @@ public class BleConnector {
         @Override
         // New services discovered
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            Log.i(TAG, "onServicesDiscovered received: " + status);
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                for (BluetoothGattService gattService : gatt.getServices()) {
+                    for (BluetoothGattCharacteristic gattCharacteristic : gattService.getCharacteristics()) {
+                        Log.i(TAG, "Characteristic discovered:  " + gattCharacteristic.getUuid().toString());
+                    }
+                    Log.i(TAG, "onServicesDiscovered received: " + gattService.getUuid().toString());
+                }
+
+            }
+
         }
 
         @Override

@@ -6,7 +6,7 @@ android {
 
 
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion 22
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -36,6 +36,6 @@ dependencies {
 task copyPlugin(type: Copy) {
     dependsOn assemble
     from ('build/outputs/aar')
-    into ('/Users/venetanji/Dev/UnityBleTest/Assets/Plugins/Android')
+    into ('C:\\Users\\Maoyu\\Documents\\Balance\\Assets\\Plugins\\Android')
     include (project.name + "-release.aar")
 }
