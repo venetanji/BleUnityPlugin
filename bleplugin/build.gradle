@@ -36,6 +36,6 @@ dependencies {
 task copyPlugin(type: Copy) {
     dependsOn assemble
     from ('build/outputs/aar')
-    into ('C:\\Users\\Maoyu\\Documents\\Balance\\Assets\\Plugins\\Android')
+    into ('/Users/Venetanji/Dev/UnityBleTest/Assets/Plugins/Android')
     include (project.name + "-release.aar")
 }
